@@ -1,49 +1,110 @@
-// Register.jsx
 import React, { useState, useContext } from "react";
-import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import AnimatedCard from "../components/AnimatedCard";
-import { motion } from "framer-motion";
-import { attachTokenToHeaders } from "../api";
-import API from "../api";
-import Loader from "../components/Loader";
 import { AuthContext } from "../App";
+import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
+import AnimatedCard from "../components/AnimatedCard";
+import Loader from "../components/Loader";
+import { attachTokenToHeaders } from "../api";
+
+const initialForm = {
+  name: "",
+  email: "",
+  password: "",
+  companyName: "",
+  companyRegistrationNumber: "",
+  countryOfRegistration: "",
+  businessType: "",
+  industrySector: "",
+  yearOfIncorporation: "",
+  numberOfEmployees: "",
+  businessEmail: "",
+  businessPhoneNumber: "",
+  websiteUrl: "",
+  linkedinProfile: "",
+  taxIdentificationNumber: "",
+};
 
 export default function Register() {
   const { setUser } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ displayName: "", email: "", password: "" });
+  const [form, setForm] = useState(initialForm);
+  const [files, setFiles] = useState({});
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFiles({ ...files, [e.target.name]: e.target.files[0] });
+  };
+
+  const handleNext = async () => {
+    setError("");
+    if (step === 1) {
+      if (!form.name || !form.email || !form.password) {
+        setError("Please fill in all required fields");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const firebaseRes = await createUserWithEmailAndPassword(
+          auth,
+          form.email,
+          form.password
+        );
+        const token = await firebaseRes.user.getIdToken();
+        await attachTokenToHeaders(token);
+        setUser(firebaseRes.user);
+        setStep(2); // move to next step
+      } catch (err) {
+        setError(err.message || "Firebase registration failed");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setStep(step + 1);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const res = await createUserWithEmailAndPassword(auth, form.email, form.password);
-      await updateProfile(res.user, { displayName: form.displayName });
+      const data = new FormData();
+      data.append("firebaseUid", auth.currentUser.uid);
 
-      const token = await res.user.getIdToken();
-      await attachTokenToHeaders(token);
-
-      await API.post("/api/auth/register", {
-        name: form.displayName,
-        email: form.email,
+      Object.entries(form).forEach(([key, value]) => {
+        if (key !== "password") data.append(key, value);
+      });
+      Object.entries(files).forEach(([key, value]) => {
+        if (value) data.append(key, value);
       });
 
-      setUser(res.user);
-      navigate("/profile");
+      await axios.post("/api/auth/register", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      navigate(`/onboarding/${form.businessType.toLowerCase()}`);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleGoogleSignup() {
+  const handleGoogleSignup = async () => {
     setError("");
     setLoading(true);
     try {
@@ -51,81 +112,113 @@ export default function Register() {
       const token = await res.user.getIdToken();
       await attachTokenToHeaders(token);
 
-      // Optionally send user info to backend
-      await API.post("/api/auth/register", {
+      await axios.post("/api/auth/register", {
+        firebaseUid: res.user.uid,
         name: res.user.displayName,
         email: res.user.email,
       });
 
       setUser(res.user);
       navigate("/profile");
-    } catch (error) {
-      setError(error.message || "Google sign-up failed");
+    } catch (err) {
+      setError(err.message || "Google sign-up failed");
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <>
+            <input className="input" name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required />
+            <input className="input" name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required />
+            <input className="input" name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+            <button onClick={handleNext} className="btn-primary w-full">
+              Continue
+            </button>
+            <div className="my-4 text-center text-gray-400">OR</div>
+            <button
+              onClick={handleGoogleSignup}
+              className="flex items-center justify-center w-full px-4 py-2 rounded-md bg-white text-black hover:bg-gray-200"
+              disabled={loading}
+            >
+              <FcGoogle className="text-xl mr-2" />
+              Continue with Google
+            </button>
+          </>
+        );
+
+      case 2:
+        return (
+          <>
+            <input name="companyName" placeholder="Company Name" required onChange={handleChange} className="input" />
+            <input name="companyRegistrationNumber" placeholder="Registration Number" required onChange={handleChange} className="input" />
+            <select name="countryOfRegistration" required onChange={handleChange} className="input">
+              <option value="">Select Country</option>
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+            </select>
+            <select name="businessType" required onChange={handleChange} className="input">
+              <option value="">Business Type</option>
+              <option value="Producer">Producer</option>
+              <option value="Certifier">Certifier</option>
+              <option value="Buyer">Buyer</option>
+              <option value="Regulator">Regulator</option>
+            </select>
+            <button onClick={handleNext} className="btn-primary w-full">
+              Next
+            </button>
+          </>
+        );
+
+      case 3:
+        return (
+          <>
+            <input name="industrySector" placeholder="Industry Sector" required onChange={handleChange} className="input" />
+            <input name="yearOfIncorporation" type="number" placeholder="Year of Incorporation" required onChange={handleChange} className="input" />
+            <input name="numberOfEmployees" type="number" placeholder="Number of Employees" onChange={handleChange} className="input" />
+            <input name="businessEmail" type="email" placeholder="Business Email" required onChange={handleChange} className="input" />
+            <input name="businessPhoneNumber" placeholder="Phone Number" required onChange={handleChange} className="input" />
+            <input name="websiteUrl" type="url" placeholder="Website (optional)" onChange={handleChange} className="input" />
+            <input name="linkedinProfile" type="url" placeholder="LinkedIn (optional)" onChange={handleChange} className="input" />
+            <input name="taxIdentificationNumber" placeholder="Tax ID" required onChange={handleChange} className="input" />
+            <button onClick={handleNext} className="btn-primary w-full">
+              Next
+            </button>
+          </>
+        );
+
+      case 4:
+        return (
+          <form onSubmit={handleSubmit}>
+            <label>Business License:</label>
+            <input name="businessLicense" type="file" required onChange={handleFileChange} className="input" />
+            <label>Govt Company ID:</label>
+            <input name="governmentCompanyId" type="file" required onChange={handleFileChange} className="input" />
+            <label>Proof of Address:</label>
+            <input name="proofOfAddress" type="file" required onChange={handleFileChange} className="input" />
+            <label>Authorized Rep ID:</label>
+            <input name="authorizedRepresentativeId" type="file" required onChange={handleFileChange} className="input" />
+            <button type="submit" className="btn-primary w-full">
+              Submit
+            </button>
+          </form>
+        );
+    }
+  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <AnimatedCard className="max-w-md mx-auto backdrop-blur-md bg-white/5 border border-white/10 p-6 rounded-xl">
-        <h2 className="text-3xl font-semibold mb-2 text-white">Create Account</h2>
-        <p className="text-sm text-gray-300 mb-4">Fast signup using Firebase Auth. Profiles synced to backend.</p>
+        <h2 className="text-2xl font-bold text-white mb-4">
+          {step === 1 ? "Create Account" : `Step ${step} of 4`}
+        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            required
-            value={form.displayName}
-            onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-            placeholder="Full name"
-            className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/10 focus:outline-none"
-          />
-          <input
-            required
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            placeholder="Email"
-            className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/10 focus:outline-none"
-          />
-          <input
-            required
-            type="password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            placeholder="Password (6+ chars)"
-            className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/10 focus:outline-none"
-          />
+        {error && <p className="text-sm text-red-400 mb-2">{error}</p>}
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
-
-          <div className="flex justify-between items-center">
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white"
-              disabled={loading}
-            >
-              {loading ? "Creating..." : "Create account"}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              className="text-sm text-gray-400"
-            >
-              Already have an account?
-            </button>
-          </div>
-        </form>
-
-        <div className="my-4 text-center text-gray-400">OR</div>
-
-        <button
-          onClick={handleGoogleSignup}
-          className="flex items-center justify-center w-full px-4 py-2 rounded-md bg-white text-black hover:bg-gray-200"
-          disabled={loading}
-        >
-          <FcGoogle className="text-xl mr-2" /> Continue with Google
-        </button>
+        {renderStep()}
       </AnimatedCard>
 
       {loading && <Loader fullScreen />}

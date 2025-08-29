@@ -1,38 +1,62 @@
 import express from "express";
-import User from "../models/user.js";
+import User from "../models/User.js";
+import multer from "multer";
 
 const router = express.Router();
 
-// Register new user or return existing
-router.post("/register", async (req, res) => {
-  try {
-    const { firebaseUid, name, email } = req.body;
+// Multer setup for file uploads
+const upload = multer({ dest: "uploads/" }); // You can customize storage as needed
 
-    // Validate required fields
-    if (!firebaseUid || !email) {
-      return res.status(400).json({
-        message: "firebaseUid and email are required fields"
-      });
+// Register new user or return existing
+router.post("/register", upload.fields([
+  { name: "businessLicense", maxCount: 1 },
+  { name: "governmentCompanyId", maxCount: 1 },
+  { name: "proofOfAddress", maxCount: 1 },
+  { name: "authorizedRepresentativeId", maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const {
+      firebaseUid, name, email, companyName, companyRegistrationNumber,
+      countryOfRegistration, businessType, industrySector, yearOfIncorporation,
+      numberOfEmployees, businessEmail, businessPhoneNumber, websiteUrl,
+      linkedinProfile, taxIdentificationNumber
+    } = req.body;
+
+    // Validate required fields (add more as needed)
+    if (!companyName || !companyRegistrationNumber || !countryOfRegistration ||
+        !businessType || !industrySector || !yearOfIncorporation ||
+        !businessEmail || !businessPhoneNumber || !taxIdentificationNumber) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     let user = await User.findOne({ firebaseUid });
-
-    // Create new user if not found
     if (!user) {
       user = await User.create({
         firebaseUid,
-        name: name || "",
+        name,
         email,
         role: email === "admin@gmail.com" ? "admin" : "user",
+        companyName,
+        companyRegistrationNumber,
+        countryOfRegistration,
+        businessType,
+        industrySector,
+        yearOfIncorporation,
+        numberOfEmployees,
+        businessEmail,
+        businessPhoneNumber,
+        websiteUrl,
+        linkedinProfile,
+        businessLicense: req.files?.businessLicense?.[0]?.path,
+        governmentCompanyId: req.files?.governmentCompanyId?.[0]?.path,
+        proofOfAddress: req.files?.proofOfAddress?.[0]?.path,
+        taxIdentificationNumber,
+        authorizedRepresentativeId: req.files?.authorizedRepresentativeId?.[0]?.path
       });
     }
 
-    res.status(201).json({
-      message: "User registered successfully",
-      user,
-    });
+    res.json(user);
   } catch (error) {
-    console.error("Register Error:", error);
     res.status(500).json({ message: error.message });
   }
 });

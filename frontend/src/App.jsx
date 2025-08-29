@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -6,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserProfile from "./pages/UserProfile";
 import AdminProfile from "./pages/AdminProfile";
+import OnboardingRouter from "./pages/OnboardingRouter";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 import Loader from "./components/Loader";
@@ -28,7 +30,7 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      <div className="min-h-screen bg-gradient-to-b from-[#0f172a] via-[#0b1220] to-[#021022] dark:from-gray-900 dark:to-gray-800 transition-colors duration-500">
+      <div className="min-h-screen bg-gradient-to-b from-[#0f172a] via-[#0b1220] to-[#021022] transition-colors duration-500">
         <Navbar />
         <main className="p-4 md:p-8 max-w-6xl mx-auto">
           <Routes>
@@ -37,25 +39,26 @@ export default function App() {
               path="/login"
               element={!user ? <Login /> : <Navigate to="/" replace />}
             />
-            <Route
-              path="/register"
-              element={!user ? <Register /> : <Navigate to="/" replace />}
-            />
+            {/* <-- Changed here: Allow register route always accessible */}
+            <Route path="/register" element={<Register />} />
             <Route
               path="/profile"
               element={user ? <UserProfile /> : <Navigate to="/login" replace />}
             />
             <Route
-  path="/admin"
-  element={
-    user?.email === "admin@gmail.com" ? (
-      <AdminProfile />
-    ) : (
-      <Navigate to="/" replace />
-    )
-  }
-/>
-
+              path="/admin"
+              element={
+                user?.email === "admin@gmail.com" ? (
+                  <AdminProfile />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              }
+            />
+            <Route
+              path="/onboarding/:businessType"
+              element={user ? <OnboardingRouter /> : <Navigate to="/login" replace />}
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
