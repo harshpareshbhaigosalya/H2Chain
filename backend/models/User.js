@@ -63,6 +63,7 @@ const userSchema = new mongoose.Schema(
       type: Number,
       min: 1,
       default: null,
+      required: false,
     },
 
     // Business Contact Info
@@ -79,11 +80,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
       match: [/^https?:\/\/.+/, "Enter a valid website URL"],
+      required: false,
     },
     linkedinProfile: {
       type: String,
       default: null,
       match: [/^https?:\/\/.+/, "Enter a valid LinkedIn URL"],
+      required: false,
     },
 
     // Legal Documents (store relative paths or cloud URLs)

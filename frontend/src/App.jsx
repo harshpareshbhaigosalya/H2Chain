@@ -7,6 +7,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserProfile from "./pages/UserProfile";
 import AdminProfile from "./pages/AdminProfile";
+import AuditorDashboard from "./pages/AuditorDashboard";
+import HydrogenGenerator from "./pages/HydrogenGenerator";
+import HydrogenSellAdmin from "./pages/HydrogenSellAdmin";
 import OnboardingRouter from "./pages/OnboardingRouter";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
@@ -47,13 +50,19 @@ export default function App() {
             />
             <Route
               path="/admin"
-              element={
-                user?.email === "admin@gmail.com" ? (
-                  <AdminProfile />
-                ) : (
-                  <Navigate to="/" replace />
-                )
-              }
+              element={user && user.email === "admin@gmail.com" ? <AdminProfile /> : <Navigate to="/" replace />}
+            />
+            <Route
+              path="/auditor"
+              element={user && user.email === "auditor@gmail.com" ? <AuditorDashboard /> : <Navigate to="/" replace />}
+            />
+            <Route
+              path="/hydrogen-generator"
+              element={user ? <HydrogenGenerator /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/hydrogen-sell-admin"
+              element={user && ["admin@gmail.com", "auditor@gmail.com"].includes(user.email) ? <HydrogenSellAdmin /> : <Navigate to="/" replace />}
             />
             <Route
               path="/onboarding/:businessType"

@@ -29,7 +29,7 @@ export default function Ticker({ messages }) {
         ))}
       </div>
 
-      <style jsx>{`
+    <style>{`
         @keyframes marquee {
           0% {
             transform: translateX(100%);

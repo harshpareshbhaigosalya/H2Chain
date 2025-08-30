@@ -16,7 +16,7 @@ export default function TestimonialsSlider({ testimonials, autoPlay = true, inte
   return (
     <div className="relative max-w-4xl mx-auto p-8 bg-gradient-to-r from-green-900 via-teal-800 to-green-700 rounded-xl shadow-lg overflow-hidden">
       {/* Background Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-40 z-0 rounded-xl"></div>
+      <div className="absolute inset-0 bg-green bg-opacity-40 z-0 rounded-xl"></div>
 
       {/* Testimonial Content */}
       <div className="relative z-10 text-center text-green-100">

@@ -46,17 +46,23 @@ export default function Navbar() {
             <span className="font-semibold text-lg">H</span>
           </motion.div>
           <div className="hidden sm:block">
-            <h1 className="text-lg font-semibold">HackStarter</h1>
+            <h1 className="text-lg font-semibold">H2Chain</h1>
             <p className="text-xs text-gray-400">Modern starter — React • Firebase • Mongo</p>
           </div>
         </Link>
 
         <div className="hidden md:flex items-center gap-4">
+
           {!user && <Link to="/login" className="text-sm font-medium">Login</Link>}
           {!user && <Link to="/register" className="text-sm font-medium">Register</Link>}
-          {user && <Link to="/profile" className="text-sm font-medium">Profile</Link>}
-          {user?.email === "admin@gmail.com" && (
-            <Link to="/admin" className="text-sm font-medium">Admin</Link>
+          {user && !["admin@gmail.com", "auditor@gmail.com"].includes(user?.email) && (
+            <Link to="/profile" className="text-sm font-medium">Profile</Link>
+          )}
+          {user && user.email === "admin@gmail.com" && (
+            <Link to="/admin" className="text-sm font-medium">Admin Dashboard</Link>
+          )}
+          {user && user.email === "auditor@gmail.com" && (
+            <Link to="/auditor" className="text-sm font-medium">Auditor Dashboard</Link>
           )}
           <button
             onClick={toggleTheme}
@@ -98,8 +104,9 @@ export default function Navbar() {
           <div className="flex flex-col gap-2">
             {!user && <Link to="/login" className="py-2">Login</Link>}
             {!user && <Link to="/register" className="py-2">Register</Link>}
-            {user && <Link to="/profile" className="py-2">Profile</Link>}
-            {user?.email === "admin@gmail.com" && <Link to="/admin" className="py-2">Admin</Link>}
+            {user && !["admin@gmail.com", "auditor@gmail.com"].includes(user?.email) && <Link to="/profile" className="py-2">Profile</Link>}
+            {user && user.email === "admin@gmail.com" && <Link to="/admin" className="py-2">Admin Dashboard</Link>}
+            {user && user.email === "auditor@gmail.com" && <Link to="/auditor" className="py-2">Auditor Dashboard</Link>}
             {user && <button onClick={handleSignOut} className="py-2 text-left">Sign out</button>}
           </div>
         </motion.div>

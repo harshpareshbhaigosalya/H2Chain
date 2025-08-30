@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
+import HydrogenBubbles from "./HydrogenBubbles";
 
 export default function HeroSection() {
   return (
@@ -19,11 +20,12 @@ export default function HeroSection() {
         transition={{ delay: 0.3 }}
         className="mt-6 text-lg md:text-xl text-teal-300 max-w-2xl"
       >
-        Sustainable, modern, and fast — a component system for developers building a cleaner tomorrow.
+        Sustainable, modern, and fast — a component system for developers
+        building a cleaner tomorrow.
       </motion.p>
 
       <motion.div
-        className="mt-10 flex gap-4 flex-wrap justify-center"
+        className="mt-10 flex gap-4 flex-wrap justify-center relative z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
@@ -41,6 +43,9 @@ export default function HeroSection() {
           Learn More
         </a>
       </motion.div>
+
+      {/* Bubbles will rise from below the buttons */}
+      <HydrogenBubbles />
     </section>
   );
 }
