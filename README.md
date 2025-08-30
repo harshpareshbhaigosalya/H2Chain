@@ -74,6 +74,21 @@ ETHEREUM_RPC_URL=id
 PRIVATE_KEY=0x...
 GROQ_API_KEY=gsk_...
 ```
+---
+
+## 📸 Screenshots
+
+### 1. Register Page
+![Register Page](frontend/public/Screenshot%202025-08-30%20230421.png)
+
+### 2. Dashboard
+![Dashboard](frontend/public/Screenshot%202025-08-30%20230700.png)
+
+### 3. Credit Transfer Screenshot 
+![Credit Transfer](frontend/public/Screenshot%202025-08-30%20230837.png)
+
+### 4. Admin Dashboard
+![Admin Dashboard](frontend/public/Screenshot%202025-08-30%20230923.png)
 
 ---
 
