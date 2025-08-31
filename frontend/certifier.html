@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+    <style>
+        body, html {
+            margin: 0; padding: 0; font-family: 'Arial', sans-serif; min-height: 100vh; width: 100%;
+            background: linear-gradient(135deg, #0a2e2b, #000000); color: #fff;
+            box-sizing: border-box;
+        }
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: rgba(10, 46, 43, 0.95); display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .navbar .logo { font-size: 1.7em; font-weight: bold; color: #1de9b6; letter-spacing: 1px; }
+        .navbar .menu { display: flex; gap: 20px; }
+        .navbar .menu-item { color: #b2dfdb; cursor: pointer; transition: color 0.3s; font-size: 1.1em; }
+        .navbar .menu-item:hover { color: #1de9b6; }
+        .navbar .profile { display: flex; align-items: center; gap: 10px; }
+        .navbar .profile-icon { width: 30px; height: 30px; background: #1de9b6; border-radius: 50%; }
+        .sidebar {
+            width: 200px; background: rgba(10, 46, 43, 0.95); padding: 80px 20px 20px; height: 100vh;
+            position: fixed; z-index: 9; top: 0; left: 0; transition: left 0.3s;
+            display: flex; flex-direction: column; justify-content: flex-start;
+        }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li { padding: 15px; font-size: 1.1em; color: #b2dfdb; cursor: pointer; transition: background 0.3s; border-radius: 8px; }
+        .sidebar li:hover { background: rgba(29, 233, 182, 0.2); }
+        .main-container {
+            display: flex; min-height: 100vh; margin-left: 200px; transition: margin-left 0.3s;
+        }
+        .content {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 80px 30px 30px 30px; text-align: center; animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { font-size: 2.3em; margin-bottom: 20px; text-shadow: 2px 2px #000; color: #26a69a; }
+        .feature-tabs { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .feature-tab { padding: 10px 20px; background: rgba(29, 233, 182, 0.2); border-radius: 8px; cursor: pointer; transition: transform 0.3s, background 0.3s; font-weight: bold; color: #1de9b6; text-decoration: none; }
+        .feature-tab:hover { transform: scale(1.05); background: rgba(29, 233, 182, 0.4); }
+        .feature-tab.active { background: #1de9b6; color: #0a2e2b; }
+        .card {
+            background: rgba(29, 233, 182, 0.18); padding: 32px 24px; margin: 20px 0; border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); width: 100%; max-width: 420px;
+            transition: transform 0.3s; animation: fadeIn 1s ease-in-out;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .card:hover { transform: translateY(-6px) scale(1.01); }
+        input {
+            padding: 12px; margin: 12px 0; width: 100%; border-radius: 8px; border: none; font-size: 1.1em;
+            background: #b2dfdb; color: #0a2e2b; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 12px; margin: 12px 0; width: 100%; border-radius: 8px; border: none; font-size: 1.1em;
+            background: #1de9b6; color: #0a2e2b; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        button:hover { background: #26a69a; transform: scale(1.03); }
+        pre {
+            background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; max-height: 200px; overflow: auto; font-size: 0.98em; width: 100%; word-break: break-word;
+        }
+        .bubble {
+            position: absolute; border-radius: 50%; background: rgba(38, 166, 154, 0.3);
+            animation: float 12s infinite ease-in-out, glow 2s alternate infinite;
+        }
+        @keyframes glow { 0% { box-shadow: 0 0 5px rgba(38, 166, 154, 0.5); } 100% { box-shadow: 0 0 15px rgba(38, 166, 154, 0.8); } }
+        .bubble:nth-child(1) { width: 40px; height: 40px; left: 15%; bottom: -80px; animation-duration: 14s, 2s; }
+        .bubble:nth-child(2) { width: 25px; height: 25px; left: 35%; bottom: -80px; animation-duration: 10s, 2s; }
+        .bubble:nth-child(3) { width: 35px; height: 35px; left: 80%; bottom: -80px; animation-duration: 16s, 2s; }
+        @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(-100vh); } }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .sidebar { left: -220px; position: absolute; }
+            .main-container { margin-left: 0; }
+            .content { padding: 80px 10px 10px 10px; }
+        }
+        @media (max-width: 600px) {
+            .navbar { flex-direction: column; height: auto; padding: 10px; }
+            .sidebar { display: none; }
+            .main-container { margin-left: 0; }
+            .content { padding: 70px 2vw 10px 2vw; }
+            .card { max-width: 98vw; padding: 18px 6px; }
+            h2 { font-size: 1.3em; }
+        }
+    </style>
+        .bubble:nth-child(1) { width: 40px; height: 40px; left: 15%; bottom: -80px; animation-duration: 14s, 2s; }
+        .bubble:nth-child(2) { width: 25px; height: 25px; left: 35%; bottom: -80px; animation-duration: 10s, 2s; }
+        .bubble:nth-child(3) { width: 35px; height: 35px; left: 80%; bottom: -80px; animation-duration: 16s, 2s; }
+        @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(-100vh); } }
+        .fancy-btn { padding: 12px 24px; background: #1de9b6; border-radius: 8px; margin-top: 20px; cursor: pointer; color: #0a2e2b; transition: transform 0.3s; }
+        .fancy-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">H2Chain</div>
+        <div class="menu">
+            <span class="menu-item">Home</span>
+            <span class="menu-item">About Us</span>
+            <span class="menu-item">Support</span>
+        </div>
+        <div class="profile">
+            <div class="profile-icon"></div>
+            <span>Certifier</span>
+            <span>Sign Out</span>
+        </div>
+    </div>
+    <div class="sidebar">
+        <ul>
+            <li>Dashboard</li>
+            <li>Profile</li>
+            <li>Wallet</li>
+            <li>Settings</li>
+            <li>Analytics</li>
+        </ul>
+    </div>
+    <div class="main-container">
+        <div class="content">
+            <div class="feature-tabs">
+                <a href="producer.html" class="feature-tab">Producer</a>
+                <a href="certifier.html" class="feature-tab active">Certifier</a>
+                <a href="buyer.html" class="feature-tab">Buyer</a>
+            </div>
+            <div class="card">
+                <h3>Certify Batch</h3>
+                <input id="certifyId" placeholder="Batch ID" type="number">
+                <button onclick="certifyBatch()">Certify</button>
+                <pre id="certifyResult"></pre>
+            </div>
+            <div class="fancy-btn" onclick="alert('Running AI Fraud Check... (Demo Only)')"></div>
+        </div>
+    </div>
+    <div class="bg-bubble b1"></div>
+    <div class="bg-bubble b2"></div>
+    <div class="bg-bubble b3"></div>
+    <div class="bg-bubble b4"></div>
+    <div class="bg-bubble b5"></div>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+    <script>
+    // --- Blockchain config ---
+    const CONTRACT_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0".trim();
+    const ABI = [
+        {"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"createBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"certifyBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"},{"internalType":"address","name":"_to","type":"address"}],"name":"transferBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"retireBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"batchCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"batches","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"address","name":"producer","type":"address"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bool","name":"certified","type":"bool"},{"internalType":"bool","name":"retired","type":"bool"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"}
+    ];
+
+    let provider, signer, contract;
+
+    async function connectWallet() {
+        if (window.ethereum) {
+            provider = new ethers.BrowserProvider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            signer = await provider.getSigner();
+            contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+            const address = await signer.getAddress();
+            document.getElementById("walletAddress").textContent = `Connected: ${address}`;
+        } else {
+            alert("MetaMask not detected. Please install MetaMask.");
+        }
+    }
+
+    async function certifyBatch() {
+        const batchId = document.getElementById("certifyId").value;
+        if (!batchId) {
+            alert("Please enter a batch ID.");
+            return;
+        }
+                // Show immersive loading animation
+                document.getElementById("certifyResult").innerHTML = `
+                    <div class="immersive-loader">
+                        <div class="loader"></div>
+                        <div class="blockchain-text">
+                            <span>⛓️ Connecting to Blockchain Node...</span><br>
+                            <span class="dots" id="dots1"></span>
+                            <span>🔍 Validating Batch Integrity...</span><br>
+                            <span class="dots" id="dots2"></span>
+                            <span>🛡️ Checking for Double-Spend & Fraud...</span><br>
+                            <span class="dots" id="dots3"></span>
+                            <span>✅ Finalizing Certification...</span>
+                        </div>
+                    </div>
+                `;
+                // Animate dots
+                let d1 = 0, d2 = 0, d3 = 0;
+                const dotInterval = setInterval(() => {
+                    if (d1 < 3) { document.getElementById('dots1').textContent += '.'; d1++; return; }
+                    if (d2 < 3) { document.getElementById('dots2').textContent += '.'; d2++; return; }
+                    if (d3 < 3) { document.getElementById('dots3').textContent += '.'; d3++; return; }
+                    clearInterval(dotInterval);
+                }, 700);
+                // Simulate blockchain validation delay
+                setTimeout(() => {
+                        document.getElementById("certifyResult").innerHTML = `
+                            <div class="success-immersive">
+                                <div class="success-icon">✔️</div>
+                                <div class="success-text">Batch certified successfully on the blockchain!</div>
+                                <div class="success-detail">All cryptographic proofs and anti-fraud checks passed.<br>Certification is now immutable and public.</div>
+                            </div>
+                        `;
+                }, 4200);
+    }
+</script>
+<style>
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #1de9b6;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-bottom: 18px;
+    box-shadow: 0 0 16px #1de9b6aa;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.immersive-loader {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 18px 0;
+    font-size: 1.1em;
+    color: #b2dfdb;
+    background: rgba(0,0,0,0.18);
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #1de9b633;
+}
+.blockchain-text span { display: block; margin: 6px 0; font-size: 1.08em; }
+.dots { color: #1de9b6; font-weight: bold; }
+.success-immersive {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 18px 0;
+    font-size: 1.15em;
+    color: #1de9b6;
+    background: rgba(0,0,0,0.18);
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #1de9b633;
+    animation: fadeIn 1s;
+}
+.success-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 12px #1de9b6cc;
+}
+.success-text {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 6px;
+}
+.success-detail {
+    font-size: 0.98em;
+    color: #b2dfdb;
+    margin-top: 4px;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+    </script>
+    <div style="text-align:center;margin-top:10px;">
+        <button onclick="connectWallet()">Connect Wallet</button>
+        <div id="walletAddress" style="margin-top:10px;"></div>
+    </div>
+</body>
+</html>

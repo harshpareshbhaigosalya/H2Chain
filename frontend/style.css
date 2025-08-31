@@ -1,0 +1,109 @@
+/* Global Styles */
+body, html {
+  margin: 0; padding: 0; font-family: 'Arial', sans-serif; min-height: 100vh; width: 100vw;
+  color: #fff; overflow-x: hidden; position: relative;
+}
+
+/* Animated Gradient Background */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -2;
+  background: linear-gradient(120deg, #004d40 0%, #26a69a 100%);
+  animation: gradientMove 12s ease-in-out infinite alternate;
+  opacity: 0.95;
+}
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Floating Bubbles Animation */
+.bg-bubble {
+  position: fixed;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #1de9b6 60%, #26a69a 100%);
+  opacity: 0.18;
+  z-index: -1;
+  animation: floatBubble 18s linear infinite;
+}
+.bg-bubble.b1 { width: 120px; height: 120px; left: 8vw; bottom: -140px; animation-delay: 0s; }
+.bg-bubble.b2 { width: 80px; height: 80px; left: 60vw; bottom: -100px; animation-delay: 4s; }
+.bg-bubble.b3 { width: 160px; height: 160px; left: 80vw; bottom: -180px; animation-delay: 8s; }
+.bg-bubble.b4 { width: 60px; height: 60px; left: 30vw; bottom: -60px; animation-delay: 2s; }
+.bg-bubble.b5 { width: 100px; height: 100px; left: 75vw; bottom: -120px; animation-delay: 6s; }
+@keyframes floatBubble {
+  0% { transform: translateY(0) scale(1); opacity: 0.18; }
+  70% { opacity: 0.22; }
+  100% { transform: translateY(-110vh) scale(1.1); opacity: 0.10; }
+}
+
+a { text-decoration: none; color: inherit; }
+
+.container {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100vh; text-align: center; animation: fadeIn 1s ease-in-out;
+}
+
+/* Actor Cards (Landing) */
+.roles { display: flex; gap: 30px; margin-top: 50px; }
+.role-card {
+  padding: 40px 60px; background: linear-gradient(135deg, #1de9b6, #004d40);
+  border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  font-size: 1.5em; transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.role-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.7);
+  background: linear-gradient(135deg, #26a69a, #1de9b6);
+}
+
+/* Dashboard Pages */
+.dashboard {
+  display: flex; flex-direction: column; align-items: center; justify-content: start;
+  padding: 50px; min-height: 100vh;
+  background: transparent;
+  animation: fadeIn 1s ease-in-out;
+}
+
+h2 { font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px #000; }
+
+.card {
+  background: linear-gradient(135deg, #1de9b6, #004d40);
+  padding: 30px; margin: 20px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  width: 400px; transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover {
+  transform: translateY(-10px) scale(1.02); box-shadow: 0 12px 25px rgba(0,0,0,0.7);
+  background: linear-gradient(120deg, #26a69a, #1de9b6);
+}
+
+input, button {
+  padding: 10px; margin: 10px 0; width: 100%; border-radius: 8px; border: none;
+  font-size: 1em;
+}
+input { background: #b2dfdb; color: #004d40; }
+button {
+  background: #00796b; color: #fff; cursor: pointer; font-weight: bold; transition: 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+button:hover {
+  background: #004d40; transform: scale(1.05);
+  box-shadow: 0 4px 16px #1de9b6cc;
+}
+
+/* Result Highlight Animation */
+pre {
+  background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; overflow-x: auto;
+  max-height: 150px;
+  transition: 0.5s ease;
+}
+pre.highlight { background: #1de9b6; color: #004d40; transform: scale(1.02); }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
