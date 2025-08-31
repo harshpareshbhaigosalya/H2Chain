@@ -106,6 +106,25 @@ const roadmapSteps = [
   },
 ];
 
+// Team member data
+const teamMembers = [
+  {
+    name: "HARSH GOSALIYA",
+    role: "Project Lead & Blockchain Developer",
+    img: "/team/harsh.jpg", // Add your image to public/team/
+  },
+  {
+    name: "SWAYAM MAMTORA",
+    role: "Full-stack Developer",
+    img: "/team/swayam.jpg",
+  },
+  {
+    name: "AMAN PANCHAL",
+    role: "Smart Contract Auditor",
+    img: "/team/aman.jpeg",
+  },
+];
+
 export default function Home() {
   return (
     <div className="text-white bg-animated min-h-screen relative overflow-hidden">
@@ -362,6 +381,50 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* DEVELOPED BY SECTION */}
+      <div className="mt-20 flex flex-col items-center justify-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-4xl font-extrabold mb-8 bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 bg-clip-text text-transparent tracking-wide drop-shadow-xl flex items-center gap-3"
+        >
+          {/* <span className="inline-block w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg mr-2">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#10B981"/><text x="50%" y="55%" textAnchor="middle" fill="#fff" fontSize="12" fontFamily="Arial" dy=".3em">DEV</text></svg>
+          </span> */}
+          Developed By
+        </motion.h2>
+        <div className="flex gap-16 flex-wrap justify-center mb-12">
+          {teamMembers.map((member, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: idx * 0.2 }}
+              className="flex flex-col items-center group transition-all duration-300"
+            >
+              <div
+                className="w-44 h-44 rounded-full border-4 border-emerald-400 bg-gradient-to-br from-emerald-600 via-green-500 to-teal-400 shadow-2xl overflow-hidden mb-5 flex items-center justify-center relative group-hover:scale-105 group-hover:shadow-emerald-500/50 transition-all duration-300"
+                style={{ boxShadow: "0 0 40px 0 rgba(16, 185, 129, 0.35)" }}
+              >
+                <img
+                  src={member.img}
+                  alt={member.name}
+                  className="w-full h-full object-cover group-hover:opacity-90 transition duration-300"
+                />
+                <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-emerald-300 transition-all duration-300 pointer-events-none"></div>
+              </div>
+              <div className="text-xl font-bold text-white text-center group-hover:text-emerald-300 transition duration-300">
+                {member.name}
+              </div>
+              <div className="text-base text-emerald-200 text-center mt-2 group-hover:text-white transition duration-300">
+                {member.role}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

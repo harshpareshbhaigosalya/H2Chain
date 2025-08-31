@@ -47,7 +47,7 @@ export default function Navbar() {
           </motion.div>
           <div className="hidden sm:block">
             <h1 className="text-lg font-semibold">H2Chain</h1>
-            <p className="text-xs text-gray-400">Modern starter — React • Firebase • Mongo</p>
+            <p className="text-xs text-gray-400">Go Green Go Safe</p>
           </div>
         </Link>
 

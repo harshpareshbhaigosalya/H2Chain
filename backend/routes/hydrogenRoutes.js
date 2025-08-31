@@ -10,24 +10,35 @@ const upload = multer({ dest: "uploads/" });
 import User from "../models/User.js";
 
 router.post("/generate", verifyToken, upload.fields([
-  { name: "documents", maxCount: 10 },
+  { name: "ppa", maxCount: 1 },
+  { name: "eac", maxCount: 1 },
+  { name: "generationLogs", maxCount: 1 },
+  { name: "auditorReport", maxCount: 1 },
   { name: "certificate", maxCount: 1 },
 ]), async (req, res) => {
   try {
     const { amount, certificateType } = req.body;
-    // Find user by Firebase UID from decoded token
     const firebaseUid = req.user.uid;
     const userDoc = await User.findOne({ firebaseUid });
     if (!userDoc) return res.status(400).json({ message: "User not found" });
     const userId = userDoc._id;
-    const documents = req.files["documents"] || [];
-    const certificate = req.files["certificate"]?.[0] || null;
+    const ppa = req.files["ppa"]?.[0]?.path;
+    const eac = req.files["eac"]?.[0]?.path;
+    const generationLogs = req.files["generationLogs"]?.[0]?.path;
+    const auditorReport = req.files["auditorReport"]?.[0]?.path;
+    const certificate = req.files["certificate"]?.[0]?.path;
+    if (!ppa || !generationLogs || !auditorReport || !certificate) {
+      return res.status(400).json({ message: "All required documents must be uploaded." });
+    }
     const request = new HydrogenRequest({
       user: userId,
       amount,
       certificateType,
-      documents: documents.map(f => f.path),
-      certificate: certificate?.path,
+      ppa,
+      eac,
+      generationLogs,
+      auditorReport,
+      certificate,
       status: "pending",
     });
     await request.save();
