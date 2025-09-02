@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulator Dashboard</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; font-family: 'Arial', sans-serif; min-height: 100vh; width: 100%;
+            background: linear-gradient(135deg, #004d40, #26a69a); color: #fff;
+            box-sizing: border-box;
+        }
+        .dashboard {
+            display: flex; flex-direction: column; align-items: center; padding: 60px 30px 30px 30px; min-height: 100vh;
+        }
+        h2 { font-size: 2.3em; margin-bottom: 20px; text-shadow: 2px 2px #000; color: #1de9b6; }
+        .card {
+            background: linear-gradient(135deg, #1de9b6, #004d40); padding: 32px 24px; margin: 20px 0; border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); width: 100%; max-width: 420px;
+            transition: transform 0.3s; animation: fadeIn 1s ease-in-out;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .card:hover { transform: translateY(-6px) scale(1.01); }
+        button {
+            padding: 12px; margin: 12px 0; width: 100%; border-radius: 8px; border: none; font-size: 1.1em;
+            background: #00796b; color: #fff; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        button:hover { background: #004d40; transform: scale(1.03); }
+        #logs { max-height: 300px; overflow: auto; width: 100%; }
+        .log-entry { background: rgba(0,0,0,0.6); padding: 10px; margin: 5px 0; border-radius: 5px; word-break: break-word; }
+        .alert { background: red; }
+        .bubble {
+            position: absolute; border-radius: 50%; background: rgba(29, 233, 182, 0.3);
+            animation: float 10s infinite ease-in-out, glow 2s alternate infinite;
+        }
+        @keyframes glow { 0% { box-shadow: 0 0 5px rgba(29, 233, 182, 0.5); } 100% { box-shadow: 0 0 15px rgba(29, 233, 182, 0.8); } }
+        .bubble:nth-child(1) { width: 50px; height: 50px; left: 10%; bottom: -100px; animation-duration: 15s, 2s; }
+        .bubble:nth-child(2) { width: 30px; height: 30px; left: 30%; bottom: -100px; animation-duration: 12s, 2s; }
+        .bubble:nth-child(3) { width: 40px; height: 40px; left: 70%; bottom: -100px; animation-duration: 18s, 2s; }
+        @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(-120vh); } }
+        .fancy-btn {
+            padding: 12px 24px; background: #00796b; border-radius: 8px; margin-top: 20px; cursor: pointer; color: #fff; font-weight: bold; transition: transform 0.3s;
+        }
+        .fancy-btn:hover { background: #004d40; transform: scale(1.05); }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .dashboard { padding: 60px 2vw 10px 2vw; }
+            .card { max-width: 98vw; padding: 18px 6px; }
+            h2 { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h2>Regulator Dashboard - Welcome, Regulator</h2>
+        <div class="card">
+            <h3>Blockchain Event Logs (Immutable Diary)</h3>
+            <button onclick="fetchLogs()">Fetch All Logs</button>
+            <div id="logs"></div>
+        </div>
+        <div class="card">
+            <h3>Simulate Hacker Attempt</h3>
+            <button onclick="simulateHacker()">Simulate Fraud</button>
+            <pre id="fraudResult"></pre>
+        </div>
+        <!-- Camouflage: Fancy non-functional -->
+        <div class="fancy-btn" onclick="alert('Generating Compliance Report... (Demo Only)')">Generate Report</div>
+    </div>
+    <!-- Bubbles -->
+    <div class="bg-bubble b1"></div>
+    <div class="bg-bubble b2"></div>
+    <div class="bg-bubble b3"></div>
+    <div class="bg-bubble b4"></div>
+    <div class="bg-bubble b5"></div>
+    <script>
+        // Inline JS
+        const API = "http://localhost:3000";
+        async function fetchLogs() {
+            const res = await fetch(API + "/getAllBatches");
+            const data = await res.json();
+            const container = document.getElementById("logs");
+            container.innerHTML = "";
+            data.forEach(batch => {
+                const div = document.createElement("div");
+                div.className = "log-entry";
+                div.innerHTML = `Immutable Log: Batch ID: ${batch.id} | Producer: ${batch.producer} | Amount: ${batch.amount}kg | Status: ${batch.status} | Timestamp: ${batch.timestamp} | Tamper-Proof Hash: ${batch.hash}`;
+                container.appendChild(div);
+            });
+        }
+        async function simulateHacker() {
+            const res = await fetch(API + "/simulateFraud", { method: "POST" });
+            const data = await res.json();
+            const result = document.getElementById("fraudResult");
+            result.textContent = data.message;
+            if (data.alert) result.classList.add("alert");
+        }
+    </script>
+</body>
+</html>

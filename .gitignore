@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -----------------------
 # Node.js (backend/frontend if Node/React)
 # -----------------------
@@ -48,3 +49,22 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+=======
+node_modules
+.env
+
+# Hardhat files
+/cache
+/artifacts
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+>>>>>>> 8529ff8c015a51d33fd8da31f15fe1aedfa7da2f
