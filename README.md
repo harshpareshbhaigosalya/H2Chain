@@ -139,6 +139,22 @@ graph TB
 
 ---
 
+## 🖼️ Screenshots
+
+### Landing Page
+![Landing Page](docs/home.png)
+
+### ChatBot Page
+![Chat Bot](docs/chatbot.png)
+
+### Dashboard
+![Dashboard](docs/dashboard.png)
+
+### Admin
+![Admin](docs/admin.png)
+
+---
+
 ## 💻 Tech Stack
 
 | Component | Technology |
